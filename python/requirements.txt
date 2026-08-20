@@ -1,0 +1,18 @@
+# Active provider by default
+anthropic>=0.40.0
+python-dotenv>=1.0.1
+web3>=6.20.0
+chromadb>=1.5.0
+
+# Only needed if MODEL_PROVIDER=openai
+# openai>=1.50.0
+
+# Only needed if MODEL_PROVIDER=gemini
+# google-genai>=0.3.0
+
+# Ollama needs no package, calls go over plain async HTTP via httpx
+# Also used for the Glacier REST calls in chainkit_fetch.py
+httpx>=0.27.0
+
+# Official MCP Python SDK, needed for chainkit_mcp_agent.py
+mcp>=1.0.0
