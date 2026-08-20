@@ -24,9 +24,9 @@ const SENT_PAYMENTS_LOG = new Set(); // idempotency, in memory for this demo
 // Mock invoice database, standing in for a real one, same shape you'd
 // get back from a real accounts-payable system or database query.
 const invoices = [
-  { id: "INV-042", supplier: "Supplier X", amountUsdc: 50, dueDate: "2026-08-14", paid: false, recipient: "0xAb12cd34ef56ab12cd34ef56ab12cd34ef56ab12" },
-  { id: "INV-043", supplier: "Supplier Y", amountUsdc: 120, dueDate: "2026-08-19", paid: false, recipient: "0xCd34ef56ab12cd34ef56ab12cd34ef56ab12cd34" },
-  { id: "INV-044", supplier: "Supplier Z", amountUsdc: 30, dueDate: "2026-08-20", paid: true, recipient: "0xEf56ab12cd34ef56ab12cd34ef56ab12cd34ef56" },
+  { id: "INV-042", supplier: "Supplier X", amountUsdc: 0.050, dueDate: "2026-08-14", paid: false, recipient: "0xab12cd34ef56ab12cd34ef56ab12cd34ef56ab12" },
+  { id: "INV-043", supplier: "Supplier Y", amountUsdc: 0.0120, dueDate: "2026-08-19", paid: false, recipient: "0xcd34ef56ab12cd34ef56ab12cd34ef56ab12cd34" },
+  { id: "INV-044", supplier: "Supplier Z", amountUsdc: 0.030, dueDate: "2026-08-20", paid: true, recipient: "0xef56ab12cd34ef56ab12cd34ef56ab12cd34ef56" },
 ];
 
 function daysOverdue(dueDate) {
