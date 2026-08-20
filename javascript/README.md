@@ -65,12 +65,12 @@ signing logic is correct.
 
 ## A note on the Solidity file
 
-There was no Solidity compiler available in the environment this repo
-was built in, so `kill_switch.sol` was not compiled or deployed during
-development, unlike every other file here. It follows standard,
-well-established Solidity patterns and was carefully hand-checked, but
-compile and test it yourself, on Remix or with Hardhat or Foundry
-locally, before you deploy it.
+`kill_switch.sol` compiles cleanly with `solc` 0.8.35, no errors, no
+warnings. It follows standard, well-established Solidity patterns and
+was carefully hand-checked, but compiling clean isn't the same as
+tested or audited, it hasn't been deployed or exercised against a live
+network. Compile and test it yourself, on Remix or with Hardhat or
+Foundry locally, before you deploy it.
 
 ## Model provider
 
