@@ -106,16 +106,17 @@ configured in this starter.
 
 ## A note on the Solidity file specifically
 
-There was no Solidity compiler available in the environment this repo
-was built in (a sandboxed network with no route to
-`binaries.soliditylang.org` or a package manager mirror for `solc`), so
-unlike every other file in this repo, `kill_switch.sol` was not compiled
-or deployed during development. It follows standard, well-established
-patterns (an `onlyOwner` modifier, a `paused` boolean guard), the exact
-shape used across countless production contracts, and was carefully
-hand-checked, but you should compile and test it yourself, on Remix or
-with Hardhat or Foundry locally, before you deploy it. This is stated
-plainly in the file's own comments too.
+`kill_switch.sol` compiles cleanly with `solc` 0.8.35
+(`solc --bin --abi kill_switch.sol`), no errors, no warnings, valid
+bytecode and ABI out the other end. It follows standard,
+well-established patterns (an `onlyOwner` modifier, a `paused` boolean
+guard), the exact shape used across countless production contracts.
+
+Compiling clean isn't the same as tested or audited: it hasn't been
+deployed, exercised against a live network, or reviewed by anyone but
+the person who wrote it. Compile and test it yourself, on Remix or with
+Hardhat or Foundry locally, and get a second set of eyes on it, before
+you deploy it. This is stated plainly in the file's own comments too.
 
 ## Picking a language
 
