@@ -1,0 +1,80 @@
+# Run any of the four language starters against a real Chroma instance,
+# no local Node, Python, Go, or Rust install required.
+#
+# Quick start:
+#   docker compose up -d chroma        # start Chroma in the background
+#   docker compose run --rm javascript npm run rag -- "What is the C-Chain?"
+#   docker compose run --rm python python rag.py "What is the C-Chain?"
+#   docker compose run --rm golang ./rag "What is the C-Chain?"
+#   docker compose run --rm rust ./rag "What is the C-Chain?"
+#
+# Session 6, the payment agent, works the same way (no Chroma needed):
+#   docker compose run --rm javascript npm run payment-agent
+#   docker compose run --rm python python payment_agent.py
+#   docker compose run --rm golang ./payment-agent
+#   docker compose run --rm rust ./payment_agent
+#
+# Any of the other scripts work the same way, swap the command:
+#   docker compose run --rm javascript npm run advisor -- <wallet-address>
+#   docker compose run --rm golang ./direct-rpc
+#
+# Each service reads its own .env file, copy .env.example to .env in
+# that language's folder first, same as running locally.
+
+services:
+  chroma:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    restart: unless-stopped
+
+  javascript:
+    build: ./javascript
+    volumes:
+      - ./javascript:/app
+      - javascript_node_modules:/app/node_modules
+    env_file:
+      - ./javascript/.env
+    environment:
+      - CHROMA_HOST=chroma
+      - CHROMA_PORT=8000
+    depends_on:
+      - chroma
+
+  python:
+    build: ./python
+    volumes:
+      - ./python:/app
+    env_file:
+      - ./python/.env
+    environment:
+      - CHROMA_HOST=chroma
+      - CHROMA_PORT=8000
+    depends_on:
+      - chroma
+
+  golang:
+    build: ./golang
+    env_file:
+      - ./golang/.env
+    environment:
+      - CHROMA_HOST=chroma
+      - CHROMA_PORT=8000
+    depends_on:
+      - chroma
+
+  rust:
+    build: ./rust
+    env_file:
+      - ./rust/.env
+    environment:
+      - CHROMA_HOST=chroma
+      - CHROMA_PORT=8000
+    depends_on:
+      - chroma
+
+volumes:
+  chroma_data:
+  javascript_node_modules:
