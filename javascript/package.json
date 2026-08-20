@@ -1,0 +1,22 @@
+{
+  "name": "mini-hack-cohort3-session6-starter-js",
+  "version": "1.0.0",
+  "description": "Cohort 3 Session 6 starter (JavaScript): autonomous payment agents, safety architecture, RAG, on-chain data methods, and the multi-provider model layer",
+  "type": "module",
+  "scripts": {
+    "direct-rpc": "node direct-rpc.js",
+    "fetch-transactions": "node chainkit-fetch.js",
+    "mcp-agent": "node chainkit-mcp-agent.js",
+    "advisor": "node advisor.js",
+    "rag": "node rag.js",
+    "payment-agent": "node payment-agent.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@avalanche-sdk/chainkit": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "chromadb": "^3.5.0",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.0"
+  }
+}
