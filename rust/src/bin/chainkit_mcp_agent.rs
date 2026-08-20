@@ -4,12 +4,33 @@
 //! terminal:
 //!
 //! ```text
-//! npx -y @avalanche-sdk/chainkit mcp-server
+//! npx -y @avalanche-sdk/chainkit start --transport sse --port 2718
 //! ```
 //!
 //! It will print the local URL it is running on, e.g.
-//! `http://localhost:PORT/mcp`. Put that URL in `CHAINKIT_MCP_URL` in
-//! your `.env`.
+//! `http://localhost:2718/sse`. Put that URL in `CHAINKIT_MCP_URL` in
+//! your `.env`. The CLI's only two transports are `stdio` and `sse`
+//! (verified against the installed package, there is no `mcp-server`
+//! subcommand and no streamable-http mode).
+//!
+//! CAUTION: this file still connects with `StreamableHttpClientTransport`,
+//! not a match for the server's `sse` transport. `rmcp` 3.1.2, the
+//! version pinned in `Cargo.lock`, does not expose a client-side
+//! transport for the legacy two-endpoint SSE protocol the CLI actually
+//! serves (only an internal SSE detail used by the streamable-http
+//! client, not a standalone SSE client transport type), so there is no
+//! drop-in fix within this crate version. A newer `rmcp` release, or a
+//! hand-rolled `reqwest`-based SSE client, would be needed to actually
+//! connect this file to that server.
+//!
+//! NOTE: as of @avalanche-sdk/chainkit@0.3.13, the latest version on npm
+//! at the time this was checked, the bundled server fails to start at
+//! all, for both transports, with "Schema method literal must be a
+//! string" thrown while constructing its internal MCP server. That's a
+//! bug in the published package, not in this file, and it has nothing to
+//! do with which transport or URL you use. This demo path won't work
+//! tonight regardless of language or the caveat above, use
+//! chainkit_fetch.rs for the same on-chain data instead.
 //!
 //! This agent then asks a plain-English question, the model decides to
 //! call a ChainKit tool, and the tool call is forwarded straight to the
@@ -50,7 +71,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let api_key = env::var("ANTHROPIC_API_KEY").map_err(|_| "ANTHROPIC_API_KEY is not set.")?;
     let mcp_url =
-        env::var("CHAINKIT_MCP_URL").map_err(|_| "Set CHAINKIT_MCP_URL in your .env first, from the running mcp-server output.")?;
+        env::var("CHAINKIT_MCP_URL").map_err(|_| "Set CHAINKIT_MCP_URL in your .env first, from the running server's output.")?;
     let model = env::var("ANTHROPIC_MODEL").unwrap_or_else(|_| "claude-sonnet-4-6".to_string());
 
     let http = reqwest::Client::new();
