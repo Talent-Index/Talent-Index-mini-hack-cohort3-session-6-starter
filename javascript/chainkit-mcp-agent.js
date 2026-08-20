@@ -1,9 +1,22 @@
 // ChainKit as an MCP server, wired into an agent
 //
 // Before running this, start the ChainKit MCP server in another terminal:
-//   npx -y @avalanche-sdk/chainkit mcp-server
-// It will print the local URL it's running on, e.g. http://localhost:PORT/mcp
-// Put that URL in CHAINKIT_MCP_URL in your .env.
+//   npx -y @avalanche-sdk/chainkit start --transport sse --port 2718
+// It will print the local URL it's running on, e.g. http://localhost:2718/sse
+// Put that URL in CHAINKIT_MCP_URL in your .env. The CLI's only two
+// transports are `stdio` and `sse` (verified against the installed
+// package, there is no `mcp-server` subcommand and no streamable-http
+// mode), so the client below uses SSEClientTransport, not
+// StreamableHTTPClientTransport.
+//
+// NOTE: as of @avalanche-sdk/chainkit@0.3.13, the latest version on npm
+// at the time this was checked, the bundled server fails to start at
+// all, for both transports, with "Schema method literal must be a
+// string" thrown while constructing its internal MCP server. That's a
+// bug in the published package, not in this file or this repo, and it
+// has nothing to do with which transport or URL you use. If it's still
+// broken tonight, this demo path won't work regardless of language,
+// use chainkit-fetch.js for the same on-chain data instead.
 //
 // This agent then asks a plain-English question, the model decides to
 // call a ChainKit tool, and the tool call is forwarded straight to the
@@ -13,17 +26,17 @@ import "dotenv/config";
 import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { createModelClient } from "./model-provider.js";
 
 const SYSTEM_PROMPT = "You are Mini Hack Assistant. Use tools when they genuinely help; otherwise answer directly.";
 
 async function connectChainkitMcp() {
   const url = process.env.CHAINKIT_MCP_URL;
-  if (!url) throw new Error("Set CHAINKIT_MCP_URL in your .env first, from the running mcp-server output.");
+  if (!url) throw new Error("Set CHAINKIT_MCP_URL in your .env first, from the running server's output.");
 
   const mcpClient = new Client({ name: "mini-hack-agent", version: "1.0.0" });
-  const transport = new StreamableHTTPClientTransport(new URL(url));
+  const transport = new SSEClientTransport(new URL(url));
   await mcpClient.connect(transport);
   return mcpClient;
 }
