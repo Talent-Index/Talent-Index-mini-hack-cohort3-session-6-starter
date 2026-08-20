@@ -3,11 +3,23 @@
 // Before running this, start the ChainKit MCP server in another
 // terminal:
 //
-//	npx -y @avalanche-sdk/chainkit mcp-server
+//	npx -y @avalanche-sdk/chainkit start --transport sse --port 2718
 //
 // It will print the local URL it is running on, e.g.
-// http://localhost:PORT/mcp. Put that URL in CHAINKIT_MCP_URL in your
-// .env.
+// http://localhost:2718/sse. Put that URL in CHAINKIT_MCP_URL in your
+// .env. The CLI's only two transports are stdio and sse (verified
+// against the installed package, there is no `mcp-server` subcommand
+// and no streamable-http mode), so this file uses
+// client.NewSSEMCPClient, not NewStreamableHttpClient.
+//
+// NOTE: as of @avalanche-sdk/chainkit@0.3.13, the latest version on npm
+// at the time this was checked, the bundled server fails to start at
+// all, for both transports, with "Schema method literal must be a
+// string" thrown while constructing its internal MCP server. That's a
+// bug in the published package, not in this file, and it has nothing to
+// do with which transport or URL you use. If it's still broken tonight,
+// this demo path won't work regardless of language, use
+// chainkit-fetch/main.go for the same on-chain data instead.
 //
 // This agent then asks a plain-English question, the model decides to
 // call a ChainKit tool, and the tool call is forwarded straight to the
@@ -57,7 +69,7 @@ func main() {
 	}
 	mcpURL := os.Getenv("CHAINKIT_MCP_URL")
 	if mcpURL == "" {
-		log.Fatal("Set CHAINKIT_MCP_URL in your .env first, from the running mcp-server output.")
+		log.Fatal("Set CHAINKIT_MCP_URL in your .env first, from the running server's output.")
 	}
 	model := os.Getenv("ANTHROPIC_MODEL")
 	if model == "" {
@@ -66,7 +78,7 @@ func main() {
 
 	anthropicClient := anthropic.NewClient(anthropicoption.WithAPIKey(apiKey))
 
-	mcpClient, err := client.NewStreamableHttpClient(mcpURL)
+	mcpClient, err := client.NewSSEMCPClient(mcpURL)
 	if err != nil {
 		log.Fatal("MCP connection error:", err)
 	}
