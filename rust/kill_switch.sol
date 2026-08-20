@@ -11,11 +11,11 @@ pragma solidity ^0.8.24;
 //
 // This file was written using standard, well-established Solidity
 // patterns (an onlyOwner modifier, a paused boolean guard), the same
-// shape used across countless production contracts. There was no
-// Solidity compiler available in the environment this was built in, so
-// unlike the rest of this repo's code, this file was not compiled or
-// deployed during development, only carefully hand-checked against
-// well-known syntax. Compile and test this yourself, on Remix or with
+// shape used across countless production contracts. It compiles cleanly
+// with solc 0.8.35, no errors, no warnings, but that only confirms
+// syntax and type-correctness, not correctness of behavior or security.
+// It has not been deployed, exercised against a live network, or
+// audited. Compile and test this yourself, on Remix or with
 // Hardhat/Foundry locally, before you deploy it, same as you should for
 // any contract that will hold real authority over real payments.
 contract PaymentAgentController {
