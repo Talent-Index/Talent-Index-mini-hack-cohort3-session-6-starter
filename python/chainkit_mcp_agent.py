@@ -2,18 +2,26 @@
 ChainKit as an MCP server, wired into an agent.
 
 Before running this, start the ChainKit MCP server in another terminal:
-    npx -y @avalanche-sdk/chainkit mcp-server
-It will print the local URL it is running on, e.g. http://localhost:PORT/mcp
-Put that URL in CHAINKIT_MCP_URL in your .env.
+    npx -y @avalanche-sdk/chainkit start --transport sse --port 2718
+It will print the local URL it is running on, e.g. http://localhost:2718/sse
+Put that URL in CHAINKIT_MCP_URL in your .env. The CLI's only two
+transports are stdio and sse (verified against the installed package,
+there is no `mcp-server` subcommand and no streamable-http mode), so
+this file uses mcp.client.sse.sse_client, not streamable_http_client.
+
+NOTE: as of @avalanche-sdk/chainkit@0.3.13, the latest version on npm at
+the time this was checked, the bundled server fails to start at all, for
+both transports, with "Schema method literal must be a string" thrown
+while constructing its internal MCP server. That's a bug in the
+published package, not in this file, and it has nothing to do with which
+transport or URL you use. If it's still broken tonight, this demo path
+won't work regardless of language, use chainkit_fetch.py for the same
+on-chain data instead.
 
 This agent then asks a plain-English question, the model decides to call
 a ChainKit tool, and the tool call is forwarded straight to the running
 MCP server, no manual SDK calls for the actual data lookup in this file
 at all.
-
-NOTE: import paths inside the official "mcp" package have moved before
-between versions (SSE transport vs. the newer streamable HTTP transport).
-If streamablehttp_client is not found, check the installed version's docs.
 """
 
 import asyncio
@@ -21,7 +29,7 @@ import os
 
 from dotenv import load_dotenv
 from mcp import ClientSession
-from mcp.client.streamable_http import streamable_http_client
+from mcp.client.sse import sse_client
 
 from model_provider import create_model_client
 
@@ -44,12 +52,12 @@ def _mcp_tools_to_anthropic_format(mcp_tools) -> list:
 async def main():
     url = os.environ.get("CHAINKIT_MCP_URL")
     if not url:
-        raise ValueError("Set CHAINKIT_MCP_URL in your .env first, from the running mcp-server output.")
+        raise ValueError("Set CHAINKIT_MCP_URL in your .env first, from the running server's output.")
 
     client = create_model_client()
     messages = []
 
-    async with streamable_http_client(url) as (read, write, _):
+    async with sse_client(url) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
             tools_result = await session.list_tools()
