@@ -85,7 +85,7 @@ npm run rag -- "your question"          # needs Chroma running
 npm run payment-agent                    # Session 6: the full payment agent
 ```
 
-## Demoing the payment agent (Session 6)
+## Payment agent in action
 
 1. **Show the safety-first refusal.** With the wallet unfunded (or an
    amount over the limit), run `npm run payment-agent`. Pre-flight catches
@@ -110,23 +110,6 @@ The four safety pillars to call out while demoing: **pre-flight checks**
 (`MAX_PAYMENT_USDC`), the **idempotency check** (no double-spend per
 invoice), and the **audit log** (every decision emitted as JSON).
 
-## How the payment agent's signing was verified
-
-`ethers.js` was installed fresh and a real `Wallet`, `Contract`, and
-`parseUnits` call were constructed and exercised directly during
-development, not just syntax-checked. The derived wallet address from a
-test private key matches exactly what the Python, Go, and Rust versions
-in this repo derive from that same key, real cross-language proof the
-signing logic is correct.
-
-## A note on the Solidity file
-
-`kill_switch.sol` compiles cleanly with `solc` 0.8.35, no errors, no
-warnings. It follows standard, well-established Solidity patterns and
-was carefully hand-checked, but compiling clean isn't the same as
-tested or audited, it hasn't been deployed or exercised against a live
-network. Compile and test it yourself, on Remix or with Hardhat or
-Foundry locally, before you deploy it.
 
 ## Model provider
 
